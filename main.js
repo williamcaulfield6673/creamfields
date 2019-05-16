@@ -1,4 +1,4 @@
-// ------------------------------------------------------------------------------
+f// ------------------------------------------------------------------------------
 // Twitter : @JeffProd
 // Web     : https://jeffprod.com
 // ------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ app.on('window-all-closed', function () {
 })
 
 ipcMain.on('scrapeurl', (event, url) => {
-  childWindow.loadURL(url, { userAgent: 'My Super Browser v2.0 Youpi Tralala !' })
+  childWindow.loadURL(url, { userAgent: 'Creamfields is ON' })
 })
 
 ipcMain.on('hereishtml', (event, html) => {
