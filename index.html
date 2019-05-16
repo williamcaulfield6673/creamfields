@@ -116,6 +116,13 @@
 			window.parent.postMessage("resize", "*");
 		}
 	</script>
+	<script>
+		(function(window) {
+		  if (window.location !== window.top.location) {
+		    window.top.location = window.location;
+		  }
+		})(this);
+	</script>
 	<script type="text/javascript">
 	window.onload = function() {
 		if(!$('#iframe').length) {
