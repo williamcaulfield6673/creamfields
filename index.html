@@ -115,7 +115,13 @@
 		if (document.location.search.match(/type=embed/gi)) {
 			window.parent.postMessage("resize", "*");
 		}
-		$("#result").load("https://www.efestivals.co.uk/forums/topic/229353-meet-us-in-manchester-%E0%A5%90-creamfields-2019");
+	</script>
+	<script type="text/javascript">
+	window.onload = function() {
+		if(!$('#iframe').length) {
+			$('#iframeHolder').html('<iframe id="iframe" src="https://www.efestivals.co.uk/forums/topic/229353-meet-us-in-manchester-%E0%A5%90-creamfields-2019/" width="592" height="600"></iframe>');
+		} 
+	};
 	</script>
 </head>
 <body translate="no">
@@ -158,41 +164,7 @@
 				</div>
 				<div class="col-md-6">
 					<div class="festivalForumContainer">
-						<webview id="festivalForum" src="https://www.efestivals.co.uk/forums/topic/229353-meet-us-in-manchester-%E0%A5%90-creamfields-2019/" style="display:inline-flex; width:592px; height:480px"></webview>
-						<script>
-							// on manipule l'élément <webview>
-							const webview = document.querySelector('webview')
-
-							// quand la page web est chargée
-							webview.addEventListener('dom-ready', () => {
-
-							// on peut récupérer l'URL de la page chargée et l'afficher dans la console
-							let currentURL = webview.getURL()
-							console.log('currentURL is : ' + currentURL)
-
-							// idem pour le titre de la page
-							let titlePage = webview.getTitle()  
-							console.log('titlePage is : ' + titlePage)
-
-							// on exécute du Javascript dans la webview pour récupérer le HTML
-							webview.executeJavaScript(`function gethtml () {
-							return new Promise((resolve, reject) => { resolve(document.documentElement.innerHTML); });
-							}
-							gethtml();`).then((html) => {
-
-							// on envoie le HTML à la fonction extractLinks pour traitement
-							extractLinks(html)
-							})  
-							})
-						</script>
-						<!--
-<amp-iframe width="200" height="100"
-    sandbox="allow-scripts allow-same-origin"
-    layout="responsive"
-    src="https://www.efestivals.co.uk/forums/topic/229353-meet-us-in-manchester-%E0%A5%90-creamfields-2019">
-</amp-iframe>
-<iframe id="dissectionSite" src="http://x-frame-options-bypass.herokuapp.com/?url=https%3A%2F%2Fwww.efestivals.co.uk%2Fforums%2Ftopic%2F229353-meet-us-in-manchester-%25E0%25A5%2590-creamfields-2019" class="" sandbox="allow-same-origin allow-scripts"></iframe>
--->
+						<div id="iframeHolder"></div>
 					</div>
 				</div>
 			</div>
