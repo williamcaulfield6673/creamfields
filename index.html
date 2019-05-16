@@ -116,27 +116,8 @@
 			window.parent.postMessage("resize", "*");
 		}
 	</script>
-	<script type="text/javascript">
-		function ignore_next_redirect() {
-		  var redirect_timer;
-		  var prevent_bust = 0  
-		  window.onbeforeunload = function() { prevent_bust++; }  
-		  redirect_timer = setInterval(function() {  
-		    if (prevent_bust > 0) {  
-		      window.top.location = 'https://www.efestivals.co.uk/forums/topic/229353-meet-us-in-manchester-%E0%A5%90-creamfields-2019/'  
-		      window.onbeforeunload = function() {}
-		      clearInterval(redirect_timer);
-		    }  
-		  }, 1);
-		}
-	</script>
-	<script type="text/javascript">
-	window.onload = function() {
-		if(!$('#iframe').length) {
-			$('#iframeHolder').html('<iframe id="iframe" src="https://www.efestivals.co.uk/forums/topic/229353-meet-us-in-manchester-%E0%A5%90-creamfields-2019/" width="592" height="600"></iframe>');
-		} 
-	};
-	</script>
+        <script src="https://unpkg.com/@ungap/custom-elements-builtin"></script>
+	<script type="module" src="https://unpkg.com/x-frame-bypass"></script>
 </head>
 <body translate="no">
 	<canvas width="308" height="500"></canvas>
@@ -178,7 +159,7 @@
 				</div>
 				<div class="col-md-6">
 					<div class="festivalForumContainer">
-						<div id="iframeHolder"></div>
+						<div id="iframeHolder"><iframe is="x-frame-bypass" src="https://www.efestivals.co.uk/forums/topic/229353-meet-us-in-manchester-%E0%A5%90-creamfields-2019/"></iframe></div>
 					</div>
 				</div>
 			</div>
