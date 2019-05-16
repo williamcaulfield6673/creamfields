@@ -116,8 +116,91 @@
 			window.parent.postMessage("resize", "*");
 		}
 	</script>
-        <script src="https://unpkg.com/@ungap/custom-elements-builtin"></script>
-	<script type="module" src="https://unpkg.com/x-frame-bypass"></script>
+        <script>/*! (c) Andrea Giammarchi - ISC */
+!function(e,t,n){"use strict";function r(e){for(var t=0,n=e.length;t<n;t++){var r=e[t],a=r.attributeName,l=r.oldValue,i=r.target,o=i.getAttribute(a);d in i&&(l!=o||null!=o)&&i[d](a,l,i.getAttribute(a),null)}}function a(e){if(1===e.nodeType){u(e,a);var t=l(e);t&&e instanceof t.Class&&b in e&&e[b]()}}function l(e){var t=e.getAttribute("is");return t&&(t=t.toLowerCase())in O?O[t]:null}function i(e,t){var n=t.Class,a=n.observedAttributes||[];if(C(e,n.prototype),a.length){new MutationObserver(r).observe(e,{attributes:!0,attributeFilter:a,attributeOldValue:!0});for(var l=[],i=0,o=a.length;i<o;i++)l.push({attributeName:a[i],oldValue:null,target:e});r(l)}}function o(e){if(1===e.nodeType){u(e,o);var t=l(e);t&&(e instanceof t.Class||i(e,t),g in e&&e[g]())}}function u(e,t){for(var n=e.querySelectorAll("[is]"),r=0,a=n.length;r<a;r++)t(n[r])}if(!t.get("ungap-li")&&typeof Reflect!=typeof s){var s="extends";try{var c={};c[s]="li";var f=HTMLLIElement,v=function(){return Reflect.construct(f,[],v)};if(v.prototype=n.create(f.prototype),t.define("ungap-li",v,c),!/is="ungap-li"/.test((new v).outerHTML))throw{}}catch(M){var d="attributeChangedCallback",g="connectedCallback",b="disconnectedCallback",p=n.assign,h=n.create,y=n.defineProperties,C=n.setPrototypeOf,m=t.define,w=t.get,A=t.upgrade,L=t.whenDefined,O=h(null);new MutationObserver(function(e){for(var t=0,n=e.length;t<n;t++){for(var r=e[t],l=r.addedNodes,i=r.removedNodes,u=0,s=l.length;u<s;u++)o(l[u]);for(var u=0,s=i.length;u<s;u++)a(i[u])}}).observe(e,{childList:!0,subtree:!0}),y(t,{define:{value:function(n,r,a){if(n=n.toLowerCase(),a&&s in a){O[n]=p({},a,{Class:r});for(var l=a[s]+'[is="'+n+'"]',i=e.querySelectorAll(l),u=0,c=i.length;u<c;u++)o(i[u])}else m.apply(t,arguments)}},get:{value:function(e){return e in O?O[e].Class:w.call(t,e)}},upgrade:{value:function(e){var n=l(e);!n||e instanceof n.Class?A.call(t,e):i(e,n)}},whenDefined:{value:function(e){return e in O?Promise.resolve():L.call(t,e)}}});var E=e.createElement;y(e,{createElement:{value:function(n,r){var a=E.call(e,n);return r&&"is"in r&&(a.setAttribute("is",r.is),t.upgrade(a)),a}}})}}}(document,customElements,Object);</script>
+	<script>
+		customElements.define('x-frame-bypass', class extends HTMLIFrameElement {
+	constructor () {
+		super()
+	}
+	connectedCallback () {
+		this.load(this.src)
+		this.src = ''
+		this.sandbox = '' + this.sandbox || 'allow-forms allow-modals allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-top-navigation-by-user-activation' // all except allow-top-navigation
+	}
+	load (url, options) {
+		if (!url || !url.startsWith('http'))
+			throw new Error(`X-Frame-Bypass src ${url} does not start with http(s)://`)
+		console.log('X-Frame-Bypass loading:', url)
+		this.srcdoc = `<html>
+<head>
+	<style>
+	.loader {
+		position: absolute;
+		top: calc(50% - 25px);
+		left: calc(50% - 25px);
+		width: 50px;
+		height: 50px;
+		background-color: #333;
+		border-radius: 50%;  
+		animation: loader 1s infinite ease-in-out;
+	}
+	@keyframes loader {
+		0% {
+		transform: scale(0);
+		}
+		100% {
+		transform: scale(1);
+		opacity: 0;
+		}
+	}
+	</style>
+</head>
+<body>
+	<div class="loader"></div>
+</body>
+</html>`
+		this.fetchProxy(url, options, 0).then(res => res.text()).then(data => {
+			if (data)
+				this.srcdoc = data.replace(/<head([^>]*)>/i, `<head$1>
+	<base href="${url}">
+	<script>
+	// X-Frame-Bypass navigation event handlers
+	document.addEventListener('click', e => {
+		if (frameElement && document.activeElement && document.activeElement.href) {
+			e.preventDefault()
+			frameElement.load(document.activeElement.href)
+		}
+	})
+	document.addEventListener('submit', e => {
+		if (frameElement && document.activeElement && document.activeElement.form && document.activeElement.form.action) {
+			e.preventDefault()
+			if (document.activeElement.form.method === 'post')
+				frameElement.load(document.activeElement.form.action, {method: 'post', body: new FormData(document.activeElement.form)})
+			else
+				frameElement.load(document.activeElement.form.action + '?' + new URLSearchParams(new FormData(document.activeElement.form)))
+		}
+	})
+	</script>`)
+		}).catch(e => console.error('Cannot load X-Frame-Bypass:', e))
+	}
+	fetchProxy (url, options, i) {
+		const proxy = [
+			'https://jsonp.afeld.me/?url=',
+			'https://cors-anywhere.herokuapp.com/'
+		]
+		return fetch(proxy[i] + url, options).then(res => {
+			if (!res.ok)
+				throw new Error(`${res.status} ${res.statusText}`);
+			return res
+		}).catch(error => {
+			if (i === proxy.length - 1)
+				throw error
+			return this.fetchProxy(url, options, i + 1)
+		})
+	}
+}, {extends: 'iframe'})
+	</script>
 </head>
 <body translate="no">
 	<canvas width="308" height="500"></canvas>
